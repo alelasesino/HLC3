@@ -1,0 +1,74 @@
+{% macro items_nav(operation) %}
+
+	<nav class="navbar navbar-default navbar-expand-lg">
+        <div class="container">
+          
+          <div class="navbar-header">
+            <a class="navbar-brand" href="{{url_for('root')}}"> <i class="fa fa-book"></i> Agenda</a>
+          </div>
+   
+          <div class="collapse navbar-collapse" id="recipes-navbar-collapse-1">
+            <ul class="nav navbar-nav">
+
+                <li {% if operation == "añadir" %} class="active" {% endif %}><a href="{{url_for('add_task')}}">Añadir Tarea</a></li>
+                <li {% if operation == "actualizar" %} class="active" {% endif %}><a href="{{url_for('select_update_task')}}">Modificar Tarea</a></li>
+                <li {% if operation == "borrar" %} class="active" {% endif %}><a href="{{url_for('select_delete_task')}}">Eliminar Tarea</a></li>
+                <li {% if operation == "listar" %} class="active" {% endif %}>
+                    <a class="dropdown-toggle" data-toggle="dropdown" role="button" aria-haspopup="true" aria-expanded="false" href="#">
+                    <span class="nav-label">Listar tareas</span><span class="caret"></span>
+                    </a>
+                    <ul class="dropdown-menu">
+                        <li><a href="{{url_for('task_list')}}">Todas las tareas</a></li>
+                        <li><a href="{{url_for('task_list', filter = 'pending')}}">Tareas pendientes</a></li>
+                        <li><a href="{{url_for('task_list', filter = 'completed')}}">Tareas completadas</a></li>
+                        <li><a href="{{url_for('task_list', filter = 'form')}}">Tareas por prioridad / estado</a></li>
+                    </ul>
+                </li>
+            </ul>
+            <!--<ul class="nav navbar-nav navbar-right">
+              <li><a href="#">Welcome !</a></li>
+            </ul>-->
+          </div>
+        </div>
+      </nav>
+
+{% endmacro %}
+
+{% macro task_table(task_list) %}
+
+  <table class='table table-striped' id="taskTable">
+
+    <tr>
+      <th>ID</th>
+      <th>Fecha</th>
+      <th>Descripcion</th>
+      <th>Prioridad</th>
+      <th>Estado</th>
+    </tr>
+
+    {% for task in task_list %}
+
+      <tr>
+        <td id="task_id">
+          {{task.id}}
+        </td>
+        <td>
+          {{task.fecha}}
+        </td>
+        <td>
+          {{task.descripcion}}
+        </td>
+        <td>
+          {{task.prioridad}}
+        </td>
+        <td>
+          {{task.estadostr}}
+        </td>
+      </tr>
+
+    {% endfor %}
+
+  </table>
+
+{% endmacro %}
+

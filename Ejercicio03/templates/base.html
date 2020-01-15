@@ -1,0 +1,37 @@
+{% extends "bootstrap/base.html" %}
+{% from "macros.html" import items_nav %}
+
+{% block head %}
+{{super()}}
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.11.2/css/all.css">
+{% endblock %}
+
+{% block styles %}
+{{ super() }}
+
+  <style>
+    body{
+      background-color: rgba(0, 0, 0, 0.168);
+    }
+    
+    nav{
+      background-color: rgba(0, 0, 0, 0.168);
+    }
+
+  </style>
+
+{% endblock %}
+
+{% block navbar %}
+
+  {{ items_nav(operation) }}
+
+{% endblock %}
+
+{% block content %}
+
+	<div class="container" style="padding: 10px;">
+		{% block contenido %}{% endblock %}
+	</div>  
+    
+{% endblock %}

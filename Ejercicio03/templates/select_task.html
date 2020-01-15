@@ -1,0 +1,44 @@
+{% extends "base.html" %}
+{% import "bootstrap/wtf.html" as wtf %}
+{% from "macros.html" import task_table %}
+
+{% block title %}Agenda{% endblock %}
+
+{% block contenido %}
+	
+	<h2>Selecciona la tarea para {{operation}}</h2>
+
+	<form action="{{url_for(form_url, task_id = task_id)}}" method="{{method}}" novalidate>
+
+		<dl>
+			{{ form.csrf_token }}
+			{{ wtf.form_field(form.id, autocomplete="off") }}
+		</dl>
+		
+		{{task_table(task_list)}}
+
+		<input class="btn btn-primary form-control" type="submit" value="Enviar datos">
+
+	</form>
+	
+	<script
+	src="https://code.jquery.com/jquery-3.4.1.js"
+	integrity="sha256-WpOohJOqMqqyKL9FccASB9O0KwACQJpFTUBLTYOVvVU="
+	crossorigin="anonymous"></script>
+  
+	<script>
+  
+	  $(document).ready(function() {
+		$("#taskTable tr").click(function() {
+		  
+		  const task_id = $(this).find("#task_id").html();
+  
+		  if(!isNaN(task_id))
+			$("#id").val(parseInt(task_id))
+  
+	  });
+	});
+  
+	</script>
+
+{% endblock %}

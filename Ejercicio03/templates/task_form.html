@@ -1,0 +1,23 @@
+{% extends "base.html" %}
+{% import "bootstrap/wtf.html" as wtf %}
+
+{% block title %}Agenda{% endblock %}
+{% block contenido %}
+	
+	<h2>Detalles de la tarea</h2>
+
+	<form action="{{url_for(form_url, task_id = task_id)}}" method="POST" novalidate>
+
+		<dl>
+			{{ form.csrf_token }}
+			{{ wtf.form_field(form.fecha) }}
+			{{ wtf.form_field(form.descripcion, autocomplete="off") }}
+			{{ wtf.form_field(form.prioridad) }}
+			{{ wtf.form_field(form.estado) }}
+		</dl>
+		
+		<input class="btn btn-primary form-control" type="submit" value="Enviar datos">
+
+	</form>
+
+{% endblock %}

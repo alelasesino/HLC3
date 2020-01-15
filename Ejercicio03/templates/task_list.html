@@ -1,0 +1,29 @@
+{% extends "base.html" %}
+{% import "bootstrap/wtf.html" as wtf %}
+{% from "macros.html" import task_table %}
+
+{% block contenido %}
+
+	{% if filter == "form" %}
+
+		<h2>Listar por</h2>
+
+		<form action="{{url_for('task_list')}}" method="POST" novalidate>
+
+			<dl>
+				{{ form.csrf_token }}
+				{{ wtf.form_field(form.prioridad) }}
+				{{ wtf.form_field(form.estado) }}
+			</dl>
+
+			<input class="btn btn-primary form-control" type="submit" value="Filtrar lista">
+
+		</form>
+
+	{% endif %}
+
+	<h2>Lista de tareas {{estado}}</h2>
+
+	{{task_table(task_list)}}
+
+{% endblock %}
