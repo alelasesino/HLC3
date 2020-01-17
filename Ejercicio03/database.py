@@ -1,7 +1,7 @@
 
 import mysql.connector
 from contextlib import closing
-from Ejercicio02.models import Task
+from Ejercicio03.models import Task
 
 db = mysql.connector.connect(
   host="localhost",
