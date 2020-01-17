@@ -9,9 +9,13 @@
     {% if "username" in session %}
           <div class="collapse navbar-collapse" id="recipes-navbar-collapse-1">
             <ul class="nav navbar-nav">
+
+              {% if session["permission"] == "admin" %}
               <li {% if operation == "añadir" %} class="active" {% endif %}><a href="{{url_for('add_task')}}">Añadir Tarea</a></li>
               <li {% if operation == "actualizar" %} class="active" {% endif %}><a href="{{url_for('select_update_task')}}">Modificar Tarea</a></li>
               <li {% if operation == "borrar" %} class="active" {% endif %}><a href="{{url_for('select_delete_task')}}">Eliminar Tarea</a></li>
+              {% endif %}
+              
               <li {% if operation == "listar" %} class="active" {% endif %}>
                 <a class="dropdown-toggle" data-toggle="dropdown" role="button" aria-haspopup="true" aria-expanded="false" href="#">
                 <span class="nav-label">Listar tareas</span><span class="caret" style="margin-left: 10px;"></span>
@@ -31,8 +35,15 @@
                   <span class="nav-label"></span>{{session["username"]}}<span class="caret" style="margin-left: 10px;"></span>
                 </a>
                 <ul class="dropdown-menu">
-                  <li><a href="" class="btn disabled">Administrador</a></li>
+
+                  {% if session["permission"] == "admin" %}
+                    <li><a href="" class="btn disabled">Administrador</a></li>
+                  {% else %}
+                    <li><a href="" class="btn disabled">Usuario</a></li>
+                  {% endif %}
+
                     <li><a href="/logout">Cerrar sesión</a></li>
+
                 </ul>
                 </li>
             </ul>

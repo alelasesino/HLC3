@@ -8,7 +8,6 @@ from Ejercicio02.utils import string_state
 
 import Ejercicio02.database as database
 
-
 @app.route('/')
 def root():
     return render_template("inicio.html", message = "Crea, modifica y elimina las tareas de tu agenda.")
@@ -144,8 +143,11 @@ def task_list():
 @app.route('/login', methods=['GET', 'POST'])
 def login():
     
-    USERNAME = "admin"
-    PASSWORD = "admin"
+    USERNAME_ADMIN = "admin"
+    PASSWORD_ADMIN = "admin"
+
+    USERNAME_USER = "user"
+    PASSWORD_USER = "user"
 
     form = LoginForm()
 
@@ -153,9 +155,15 @@ def login():
 
     if request.method == 'POST' and form.validate_on_submit():
 
-        valid_login = (form.username.data == USERNAME and form.password.data == PASSWORD)
-        
-        if(valid_login):
+        admin_login = (form.username.data == USERNAME_ADMIN and form.password.data == PASSWORD_ADMIN)
+        user_login = (form.username.data == USERNAME_USER and form.password.data == PASSWORD_USER)
+
+        if admin_login or user_login:
+            if admin_login:
+                session["permission"] = "admin"
+            else:
+                session["permission"] = "user"
+
             session["username"] = form.username.data
             session["password"] = form.password.data
             return redirect(url_for('root'))
@@ -176,14 +184,17 @@ def middleware():
 
     if("username" not in session and not request.endpoint == "login"):
         return redirect(url_for('login'))
-    #else:
-     #   print("username: ", session["username"], " Exist: ", "username" not in session)
-      #  print("password: ", session["password"])
+    else:
+        if session["permission"] == "user":
+            if not user_point_permission(request.endpoint):
+                return render_template("inicio.html", message = "Acceso restringido a usuarios administradores")
 
-    #print('endpoint: %s, url: %s, path: %s' % (
-     #   request.endpoint,
-      #  request.url,
-       # request.path))
+
+def user_point_permission(endpoint):
+
+    allowed_endpoints = ["login", "logout", "root", "task_list"]
+
+    return endpoint in allowed_endpoints;
 
 
 @app.errorhandler(404)
