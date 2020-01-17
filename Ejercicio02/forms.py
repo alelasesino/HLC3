@@ -1,6 +1,6 @@
 
 import datetime
-from Ejercicio01.utils import format_date
+from Ejercicio02.utils import format_date
 from flask_wtf import FlaskForm
 from wtforms import SelectField, TextAreaField, IntegerField, PasswordField, BooleanField, TextField
 from wtforms.fields.html5 import DateField

@@ -1,6 +1,6 @@
 
 from os import environ
-from Ejercicio01 import app
+from Ejercicio02 import app
 
 if __name__ == '__main__':
     HOST = environ.get('SERVER_HOST', 'localhost')

@@ -1,12 +1,12 @@
 
 import hashlib
 from flask import Flask, render_template, request, redirect, url_for, abort, session
-from Ejercicio01 import app
-from Ejercicio01.forms import TaskForm, SelectTaskForm, TaskListForm, LoginForm
-from Ejercicio01.models import Task
-from Ejercicio01.utils import string_state
+from Ejercicio02 import app
+from Ejercicio02.forms import TaskForm, SelectTaskForm, TaskListForm, LoginForm
+from Ejercicio02.models import Task
+from Ejercicio02.utils import string_state
 
-import Ejercicio01.database as database
+import Ejercicio02.database as database
 
 
 @app.route('/')

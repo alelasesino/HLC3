@@ -1,6 +1,6 @@
 
 from datetime import datetime
-from Ejercicio01.utils import string_state
+from Ejercicio02.utils import string_state
 
 
 class Task:
