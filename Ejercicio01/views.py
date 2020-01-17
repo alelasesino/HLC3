@@ -1,11 +1,13 @@
 
-from flask import Flask, render_template, request, redirect, url_for, abort
-from Ejercicio03 import app
-from Ejercicio03.forms import TaskForm, SelectTaskForm, TaskListForm
-from Ejercicio03.models import Task
-from Ejercicio03.utils import string_state
+import hashlib
+from flask import Flask, render_template, request, redirect, url_for, abort, session
+from Ejercicio01 import app
+from Ejercicio01.forms import TaskForm, SelectTaskForm, TaskListForm, LoginForm
+from Ejercicio01.models import Task
+from Ejercicio01.utils import string_state
 
-import Ejercicio03.database as database
+import Ejercicio01.database as database
+
 
 @app.route('/')
 def root():
@@ -137,6 +139,51 @@ def task_list():
             estado = string_state(form.estado.data, plural=True).lower()
 
     return render_template("task_list.html", form = form, task_list = task_list, filter = filter, operation = "listar", estado = estado)
+
+
+@app.route('/login', methods=['GET', 'POST'])
+def login():
+    
+    USERNAME = "admin"
+    PASSWORD = "admin"
+
+    form = LoginForm()
+
+    valid_login = True
+
+    if request.method == 'POST' and form.validate_on_submit():
+
+        valid_login = (form.username.data == USERNAME and form.password.data == PASSWORD)
+        
+        if(valid_login):
+            session["username"] = form.username.data
+            session["password"] = form.password.data
+            return redirect(url_for('root'))
+
+    return render_template("login_form.html", form = form, valid_login = valid_login)
+
+
+@app.route('/logout', methods=['GET'])
+def logout():
+    session.pop("username")
+    session.pop("password")
+
+    return redirect(url_for('login'))
+
+
+@app.before_request
+def middleware():
+
+    if("username" not in session and not request.endpoint == "login"):
+        return redirect(url_for('login'))
+    #else:
+     #   print("username: ", session["username"], " Exist: ", "username" not in session)
+      #  print("password: ", session["password"])
+
+    #print('endpoint: %s, url: %s, path: %s' % (
+     #   request.endpoint,
+      #  request.url,
+       # request.path))
 
 
 @app.errorhandler(404)

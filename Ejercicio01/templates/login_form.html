@@ -1,0 +1,29 @@
+{% extends "base.html" %}
+{% import "bootstrap/wtf.html" as wtf %}
+
+{% block title %}Agenda{% endblock %}
+{% block contenido %}
+	
+	<h2 class="text-center">Iniciar Sesión</h2>
+
+	<form action="/login" method="POST" novalidate>
+
+		<dl>
+			{{ form.csrf_token }}
+			{{ wtf.form_field(form.username, autocomplete="off") }}
+			{{ wtf.form_field(form.password, autocomplete="off") }}
+			{{ wtf.form_field(form.remember,) }}
+		</dl>
+		
+		{% if not valid_login %}
+		<div class="alert alert-danger" role="alert">
+			Usuario/Contraseña incorrecta
+		</div>
+		{% endif %}
+
+		<input class="btn btn-primary form-control" type="submit" value="Iniciar Sesión" style="margin-bottom: 10px;">
+		<a href="/register" class="control-label">¿No tienes una cuenta?, ¡Haz click aqui!</a>
+
+	</form>
+
+{% endblock %}

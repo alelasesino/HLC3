@@ -1,8 +1,8 @@
 
 import datetime
-from Ejercicio03.utils import format_date
+from Ejercicio01.utils import format_date
 from flask_wtf import FlaskForm
-from wtforms import SelectField, TextAreaField, IntegerField
+from wtforms import SelectField, TextAreaField, IntegerField, PasswordField, BooleanField, TextField
 from wtforms.fields.html5 import DateField
 from wtforms.validators import InputRequired, ValidationError
 
@@ -45,8 +45,17 @@ class SelectTaskForm(FlaskForm):
         if not any(task.id == field.data for task in self.task_list):
             raise ValidationError("El ID de la tarea no existe")
 
+
 class TaskListForm(FlaskForm):
     """Formulario que permite filtrar las tareas por estado y por prioridad
     """
     prioridad = PrioritySelectField
     estado = StateSelectField
+
+
+class LoginForm(FlaskForm):
+    """Formulario que permite iniciar sesion al usuario
+    """
+    username = TextField('Usuario', validators=[InputRequired(message="El usuario es requerido")], render_kw={"placeholder": "Usuario..."})
+    password = PasswordField('Contraseña', validators=[InputRequired(message="La contraseña es requerida")], render_kw={"placeholder": "Contraseña..."})
+    remember = BooleanField("Recordar este equipo")
