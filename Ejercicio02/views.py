@@ -181,16 +181,17 @@ def logout():
 
 @app.before_request
 def middleware():
-
-    if("username" not in session and not request.endpoint == "login"):
-        return redirect(url_for('login'))
+    
+    if "username" not in session:
+        if not request.endpoint == "login":
+            return redirect(url_for('login'))
     else:
         if session["permission"] == "user":
-            if not user_point_permission(request.endpoint):
+            if not user_endpoints_permission(request.endpoint):
                 return render_template("inicio.html", message = "Acceso restringido a usuarios administradores")
 
 
-def user_point_permission(endpoint):
+def user_endpoints_permission(endpoint):
 
     allowed_endpoints = ["login", "logout", "root", "task_list"]
 
