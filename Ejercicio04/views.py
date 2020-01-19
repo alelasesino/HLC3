@@ -162,6 +162,7 @@ def login():
 
     if request.method == 'POST' and form.validate_on_submit():
         user_session(form.user)
+        session.permanent = form.remember.data
         return redirect(url_for('root'))
 
     return render_template("login_form.html", form = form)

@@ -24,7 +24,7 @@ private_key: str = "3082025d02010002818100b73d870408f10733c5628f78585a0980b5cba5
 #public_key: str = "30819f300d06092a864886f70d010101050003818d0030818902818100b73d870408f10733c5628f78585a0980b5cba510a9eabbe1c59cd91dfd186f2ede57de48f3344b4d8763282f17c645f8cd0ce9bf3eee6011e4ceff3c26378c4ee0706820ba10de6a233650f9a00b421d3fa930c22e5118e4f160e1e2a2143acc6896ae9be8f8a31a289e88ac975ec3533e0e927dd716d7e2cb519c6e2aa16a890203010001"
 
 private_key = RSA.importKey(binascii.unhexlify(private_key))
-public_key = private_key.publickey()#RSA.importKey(binascii.unhexlify(public_key))
+public_key = private_key.publickey()
 
 def encrypt(password: str):
     cipher = PKCS1_OAEP.new(public_key)
