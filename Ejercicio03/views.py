@@ -2,11 +2,11 @@
 import hashlib
 from flask import Flask, render_template, request, redirect, url_for, abort, session
 from Ejercicio03 import app
-from Ejercicio03.forms import TaskForm, SelectTaskForm, TaskListForm, LoginForm
-from Ejercicio03.models import Task
+from Ejercicio03.forms import TaskForm, SelectTaskForm, TaskListForm, LoginForm, RegisterForm
+from Ejercicio03.models import Task, User
 from Ejercicio03.utils import string_state
-
 import Ejercicio03.database as database
+import Ejercicio03.encryption as encryption
 
 @app.route('/')
 def root():
@@ -16,7 +16,7 @@ def root():
 @app.route('/task/add', methods=['GET', 'POST'])
 def add_task():
 
-    form = TaskForm(False)
+    form: TaskForm = TaskForm(False)
     form.estado.render_kw = {"disabled": True}
     form.estado.data = 0 #ESTADO DE PENDIENTE
 
@@ -36,7 +36,7 @@ def select_update_task():
 
     task_list = database.get_all_task()
 
-    form = SelectTaskForm(task_list)
+    form: SelectTaskForm = SelectTaskForm(task_list)
 
     if form.validate_on_submit():
         return redirect(url_for('update_task', task_id = form.id.data))
@@ -52,7 +52,7 @@ def select_update_task():
 @app.route('/task/update/<int:task_id>', methods=['GET', 'POST'])
 def update_task(task_id):
 
-    form = TaskForm(True)
+    form: TaskForm = TaskForm(True)
 
     if not form.is_submitted():
         bind_data_task_form(form, database.get_task_by_id(task_id))
@@ -70,9 +70,9 @@ def update_task(task_id):
 @app.route('/task/delete', methods=['GET', 'POST'])
 def select_delete_task():
 
-    task_list = database.get_all_task()
+    task_list: list = database.get_all_task()
 
-    form = SelectTaskForm(task_list, request.args)
+    form: SelectTaskForm = SelectTaskForm(task_list, request.args)
 
     if len(request.args) > 0:
         if form.validate():
@@ -124,7 +124,7 @@ def task_list():
         else:
             abort(404)
 
-    form = TaskListForm()
+    form: TaskListForm = TaskListForm()
 
     if form.validate_on_submit():
         task_list = database.get_priority_state_task(form.prioridad.data, form.estado.data)
@@ -140,50 +140,47 @@ def task_list():
     return render_template("task_list.html", form = form, task_list = task_list, filter = filter, operation = "listar", estado = estado)
 
 
-@app.route('/login', methods=['GET', 'POST'])
-def login():
-    
-    USERNAME_ADMIN = "admin"
-    PASSWORD_ADMIN = "admin"
+@app.route('/register', methods=['GET', 'POST'])
+def register():
 
-    USERNAME_USER = "user"
-    PASSWORD_USER = "user"
-
-    form = LoginForm()
-
-    valid_login = True
+    form: RegisterForm = RegisterForm()
 
     if request.method == 'POST' and form.validate_on_submit():
+        password = encryption.encrypt(form.password.data)
+        user = User(form.username.data, password, form.nickname.data, "user")
+        database.insert_user(user)
+        user_session(user)
+        return redirect(url_for('root')) 
 
-        admin_login = (form.username.data == USERNAME_ADMIN and form.password.data == PASSWORD_ADMIN)
-        user_login = (form.username.data == USERNAME_USER and form.password.data == PASSWORD_USER)
+    return render_template("register_form.html", form = form)
 
-        if admin_login or user_login:
-            if admin_login:
-                session["permission"] = "admin"
-            else:
-                session["permission"] = "user"
 
-            session["username"] = form.username.data
-            session["password"] = form.password.data
-            return redirect(url_for('root'))
+@app.route('/login', methods=['GET', 'POST'])
+def login():
 
-    return render_template("login_form.html", form = form, valid_login = valid_login)
+    form: LoginForm = LoginForm()
+
+    if request.method == 'POST' and form.validate_on_submit():
+        user_session(form.user)
+        return redirect(url_for('root'))
+
+    return render_template("login_form.html", form = form)
 
 
 @app.route('/logout', methods=['GET'])
 def logout():
+    session.pop("nickname")
     session.pop("username")
-    session.pop("password")
-
+    session.pop("permission")
     return redirect(url_for('login'))
 
 
 @app.before_request
 def middleware():
-
-    if("username" not in session and not request.endpoint == "login"):
-        return redirect(url_for('login'))
+    
+    if "username" not in session:
+        if request.endpoint not in ["login", "register"]:
+            return redirect(url_for('login'))
     else:
         if session["permission"] == "user":
             if not user_point_permission(request.endpoint):
@@ -191,12 +188,17 @@ def middleware():
 
 
 def user_point_permission(endpoint):
-
-    allowed_endpoints = ["login", "logout", "root", "task_list"]
-
+    allowed_endpoints = ["login", "logout", "root", "task_list", "register"]
     return endpoint in allowed_endpoints;
+
+
+def user_session(user: User):
+    session["nickname"] = user.nickname
+    session["username"] = user.username
+    session["permission"] = user.permission
 
 
 @app.errorhandler(404)
 def page_not_found(error):
     return render_template("error.html", error="Página no encontrada...")
+

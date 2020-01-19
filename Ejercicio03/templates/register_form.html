@@ -1,0 +1,23 @@
+{% extends "base.html" %}
+{% import "bootstrap/wtf.html" as wtf %}
+
+{% block title %}Agenda{% endblock %}
+{% block contenido %}
+	
+	<h2 class="text-center">Registrarse</h2>
+
+	<form action="/register" method="POST" novalidate>
+
+		<dl>
+			{{ form.csrf_token }}
+			{{ wtf.form_field(form.nickname, autocomplete="off") }}
+			{{ wtf.form_field(form.username, autocomplete="off") }}
+			{{ wtf.form_field(form.password, autocomplete="off") }}
+		</dl>
+
+		<input class="btn btn-primary form-control" type="submit" value="Registrarse" style="margin-bottom: 10px;">
+
+	</form>
+
+{% endblock %}
+

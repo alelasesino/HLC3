@@ -1,7 +1,9 @@
 
 import mysql.connector
 from contextlib import closing
-from Ejercicio03.models import Task
+from Ejercicio03.models import Task, User
+import Ejercicio03.encryption as encryption
+
 
 db = mysql.connector.connect(
   host="localhost",
@@ -30,7 +32,7 @@ def get_all_task():
     return tasks
 
 
-def get_state_task(state):
+def get_state_task(state: int):
 
     with closing(db.cursor()) as c:
             
@@ -45,7 +47,7 @@ def get_state_task(state):
     return tasks
 
 
-def get_priority_task(priority):
+def get_priority_task(priority: int):
 
     with closing(db.cursor()) as c:
             
@@ -60,7 +62,7 @@ def get_priority_task(priority):
     return tasks
 
 
-def get_priority_state_task(priority, state):
+def get_priority_state_task(priority: int, state: int):
     """Obtiene las tareas con el estado y la prioridad deseada
     
     Keyword Arguments:
@@ -84,7 +86,7 @@ def get_priority_state_task(priority, state):
     return tasks
 
 
-def get_task_by_id(task_id):
+def get_task_by_id(task_id: int):
     """Obtiene los datos de una tarea por su id
     
     Arguments:
@@ -106,7 +108,7 @@ def get_task_by_id(task_id):
             return Task(id, fecha, descripcion, prioridad, estado)
 
 
-def insert_task(task):
+def insert_task(task: Task):
     """Inserta una nueva tarea en la base de datos
     
     Arguments:
@@ -119,7 +121,7 @@ def insert_task(task):
         db.commit()
 
 
-def delete_task(task_id):
+def delete_task(task_id: int):
     """Elimina la tarea deseada en la base de datos
     
     Arguments:
@@ -132,7 +134,7 @@ def delete_task(task_id):
         db.commit()
 
 
-def update_task(task):
+def update_task(task: Task):
     """Actualiza la tarea deseada en la base de datos
     
     Arguments:
@@ -143,4 +145,40 @@ def update_task(task):
         sql_query = "UPDATE agenda SET fecha = %s, descripcion = %s, prioridad = %s, estado = %s WHERE id = %s"
         c.execute(sql_query, (task.fecha, task.descripcion, task.prioridad, task.estado, task.id))
         db.commit()
+
+
+def insert_user(user: User):
+    """Inserta un nuevo usuario en la base de datos
+    
+    Arguments:
+        user {User} -- Usuario para insertar
+    """
+    with closing(db.cursor()) as c:
+
+        sql_query = "INSERT INTO usuario VALUES(%s, %s, %s, %s)"
+        c.execute(sql_query, (user.username, user.password, user.nickname, user.permission))
+        db.commit()
+
+
+def get_user_by_username(username: str):
+    """Obtiene los datos de un usuario
+    
+    Arguments:
+        username {str} -- Nombre de usuario
+    
+    Returns:
+        User -- Datos del usuario
+    """
+    with closing(db.cursor()) as c:
+
+        sql_query = "SELECT username, password, nickname, permission FROM usuario WHERE username = %s"
+        c.execute(sql_query, [username])
+        
+        result = c.fetchone()
+
+        if result != None:
+            (username, password, nickname, permission) = result
+            password = encryption.decrypt(password)
+
+            return User(username, password, nickname, permission)
 

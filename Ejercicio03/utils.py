@@ -1,7 +1,6 @@
 
 import datetime
 
-
 def format_date(date):
     """Funcion que convierte la fecha con formato %Y-%m-%d en
     una fecha con formato %d-%m-%Y

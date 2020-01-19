@@ -5,6 +5,8 @@ from flask_wtf import FlaskForm
 from wtforms import SelectField, TextAreaField, IntegerField, PasswordField, BooleanField, TextField
 from wtforms.fields.html5 import DateField
 from wtforms.validators import InputRequired, ValidationError
+from Ejercicio03.database import get_user_by_username
+from Ejercicio03.models import User 
 
 PrioritySelectField = SelectField(choices=[(i, i) for i in range(6)], coerce=int)
 StateSelectField = SelectField(choices=[(0, 'Pendiente'), (1, 'En proceso'), (2, 'Completada')], coerce=int)
@@ -59,3 +61,34 @@ class LoginForm(FlaskForm):
     username = TextField('Usuario', validators=[InputRequired(message="El usuario es requerido")], render_kw={"placeholder": "Usuario..."})
     password = PasswordField('Contraseña', validators=[InputRequired(message="La contraseña es requerida")], render_kw={"placeholder": "Contraseña..."})
     remember = BooleanField("Recordar este equipo")
+    user: User = None
+
+    def validate_username(self, field):
+        self.user = get_user_by_username(self.username.data)
+
+        if self.user == None:
+            raise ValidationError("Nombre de usuario no existe")
+
+        if self.user.username != self.username.data:
+            raise ValidationError("Nombre de usuario incorrecto")
+            
+
+    def validate_password(self, field):
+
+        if self.user != None:
+            if self.user.password != self.password.data:
+                raise ValidationError("Contraseña incorrecta")
+
+
+class RegisterForm(FlaskForm):
+    """Formulario que permite registrar un usuario
+    """
+    username = TextField('Usuario', validators=[InputRequired(message="El usuario es requerido")], render_kw={"placeholder": "Usuario..."})
+    password = PasswordField('Contraseña', validators=[InputRequired(message="La contraseña es requerida")], render_kw={"placeholder": "Contraseña..."})
+    nickname = TextField('Nombre', validators=[InputRequired(message="El nombre es requerido")], render_kw={"placeholder": "Nombre..."})
+
+    def validate_username(self, field):
+        user: User = get_user_by_username(self.username.data)
+        if user != None:
+            raise ValidationError("El nombre de usuario ya existe")
+

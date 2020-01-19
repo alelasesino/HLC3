@@ -17,3 +17,17 @@ class Task:
     @classmethod
     def new_task(cls):
         return cls(-1, datetime.now(), '', 0, 0)
+
+
+class User:
+    """Modelo de un usuario
+    """
+    def __init__(self, username:str, password:str, nickname:str, permission:str):
+        self.username = username
+        self.password = password
+        self.nickname = nickname
+        self.permission = permission
+
+    @classmethod
+    def new_user(cls):
+        return cls("", "", "", "")

@@ -3,3 +3,4 @@ Flask-Script
 Flask-Bootstrap
 mysql-connector
 Flask-WTF
+pycryptodome
