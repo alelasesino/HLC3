@@ -7,4 +7,4 @@ app.config['SECRET_KEY'] = "OfUJnnclWc7iAWap1qsr"
 
 Bootstrap(app)
 
-import Ejercicio03.views
+import Ejercicio04.views

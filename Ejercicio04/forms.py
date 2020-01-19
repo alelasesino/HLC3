@@ -1,12 +1,12 @@
 
 import datetime
-from Ejercicio03.utils import format_date
+from Ejercicio04.utils import format_date
 from flask_wtf import FlaskForm
 from wtforms import SelectField, TextAreaField, IntegerField, PasswordField, BooleanField, TextField
 from wtforms.fields.html5 import DateField
 from wtforms.validators import InputRequired, ValidationError
-from Ejercicio03.database import get_user_by_username
-from Ejercicio03.models import User 
+from Ejercicio04.database import get_user_by_username
+from Ejercicio04.models import User 
 
 PrioritySelectField = SelectField(choices=[(i, i) for i in range(6)], coerce=int)
 StateSelectField = SelectField(choices=[(0, 'Pendiente'), (1, 'En proceso'), (2, 'Completada')], coerce=int)
