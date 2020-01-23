@@ -1,12 +1,14 @@
 
 import hashlib
-from flask import Flask, render_template, request, redirect, url_for, abort, session
+from flask import Flask, render_template, request, redirect, url_for, abort, session, make_response
 from Ejercicio04 import app
 from Ejercicio04.forms import TaskForm, SelectTaskForm, TaskListForm, LoginForm, RegisterForm
 from Ejercicio04.models import Task, User
 from Ejercicio04.utils import string_state
 import Ejercicio04.database as database
 import Ejercicio04.encryption as encryption
+
+REMEMBER_COOKIE = "perman"
 
 @app.route('/')
 def root():
@@ -159,10 +161,20 @@ def register():
 def login():
 
     form: LoginForm = LoginForm()
+    username = request.cookies.get(REMEMBER_COOKIE)
+
+    if username != None and request.method == 'GET':
+        user_session(database.get_user_by_username(encryption.decrypt(username)))
+        return redirect(url_for('root'))
 
     if request.method == 'POST' and form.validate_on_submit():
         user_session(form.user)
-        session.permanent = form.remember.data
+
+        if form.remember.data:
+            response = make_response(redirect(url_for('root')))
+            response.set_cookie(REMEMBER_COOKIE, encryption.encrypt(form.username.data), max_age=60*60*24*365*2)
+            return response
+
         return redirect(url_for('root'))
 
     return render_template("login_form.html", form = form)
@@ -173,12 +185,15 @@ def logout():
     session.pop("nickname")
     session.pop("username")
     session.pop("permission")
-    return redirect(url_for('login'))
+
+    response = make_response(redirect(url_for('login')))
+    response.set_cookie(REMEMBER_COOKIE, '', expires=0, max_age=0)
+
+    return response
 
 
 @app.before_request
 def middleware():
-    
     if "username" not in session:
         if request.endpoint not in ["login", "register"]:
             return redirect(url_for('login'))
