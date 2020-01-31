@@ -10,7 +10,6 @@ import binascii
 #private_key = RSA.generate(1024, random_generator)
 #public_key = private_key.publickey()
 
-
 #private_key = private_key.exportKey(format='DER')
 #public_key = public_key.exportKey(format='DER')
 
@@ -25,6 +24,7 @@ private_key: str = "3082025d02010002818100b73d870408f10733c5628f78585a0980b5cba5
 
 private_key = RSA.importKey(binascii.unhexlify(private_key))
 public_key = private_key.publickey()
+
 
 def encrypt(password: str):
     cipher = PKCS1_OAEP.new(public_key)
