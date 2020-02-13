@@ -164,8 +164,12 @@ def login():
     username = request.cookies.get(REMEMBER_COOKIE)
 
     if username != None and request.method == 'GET':
-        user_session(database.get_user_by_username(encryption.decrypt(username)))
-        return redirect(url_for('root'))
+
+        user_decrypt = encryption.decrypt(username)
+
+        if user_decrypt != None:
+            user_session(database.get_user_by_username(user_decrypt))
+            return redirect(url_for('root'))
 
     if request.method == 'POST' and form.validate_on_submit():
         user_session(form.user)

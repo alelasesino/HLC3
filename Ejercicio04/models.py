@@ -14,9 +14,9 @@ class Task:
         self.estado = estado
         self.estadostr = string_state(estado)
 
-    @classmethod
-    def new_task(cls):
-        return cls(-1, datetime.now(), '', 0, 0)
+    @staticmethod
+    def new_task():
+        return Task(-1, datetime.now(), '', 0, 0)
 
 
 class User:
@@ -28,6 +28,6 @@ class User:
         self.nickname = nickname
         self.permission = permission
 
-    @classmethod
-    def new_user(cls):
-        return cls("", "", "", "")
+    @staticmethod
+    def new_user():
+        return User("", "", "", "")

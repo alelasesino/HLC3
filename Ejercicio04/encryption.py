@@ -27,13 +27,19 @@ public_key = private_key.publickey()
 
 
 def encrypt(password: str):
-    cipher = PKCS1_OAEP.new(public_key)
-    encrypted = cipher.encrypt(str.encode(password))
-    return binascii.hexlify(encrypted).decode('utf8')
+    try:
+        cipher = PKCS1_OAEP.new(public_key)
+        encrypted = cipher.encrypt(str.encode(password))
+        return binascii.hexlify(encrypted).decode('utf8')
+    except:
+        return None
 
 
 def decrypt(hash: str):
-    cipher = PKCS1_OAEP.new(private_key)
-    hash = binascii.unhexlify(hash)
-    return cipher.decrypt(hash).decode('utf8')
+    try:
+        cipher = PKCS1_OAEP.new(private_key)
+        hash = binascii.unhexlify(hash)
+        return cipher.decrypt(hash).decode('utf8')
+    except:
+        return None
 
